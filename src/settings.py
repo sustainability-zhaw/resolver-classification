@@ -9,7 +9,7 @@ _settings = {
     "MQ_BINDKEYS": ["importer.object"],
     "MQ_HEARTBEAT": 6000,
     "MQ_TIMEOUT": 3600,
-    "MQ_QUEUE": "indexqueue"
+    "MQ_QUEUE": "classificationqueue"
 }
 
 if os.path.exists("/etc/app/secrets.json"):
