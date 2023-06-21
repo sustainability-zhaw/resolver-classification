@@ -5,7 +5,7 @@ import db
 def run(routing_key, body):
     info_object = db.query_info_object_by_link(body['link'])
 
-    if not info_object or not len(info_object['keywords']):
+    if not info_object:
         return
     
     keywords_to_remove = []
@@ -21,4 +21,10 @@ def run(routing_key, body):
     if not len(ddcs):
         return
 
-    db.update_info_object(info_object, ddcs, keywords_to_remove)
+    db.update_info_object(
+        {
+            "filter": { "link": { "eq": info_object["link"] } },
+            "set": { "class": ddcs },
+            "remove": { "keywords": keywords_to_remove }
+        }
+    )

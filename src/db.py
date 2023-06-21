@@ -31,7 +31,7 @@ def query_info_object_by_link(link):
     )["getInfoObject"]
 
 
-def update_info_object(info_object, ddcs, keywords_to_remove):
+def update_info_object(input):
         _client.execute(
             gql(
                 """
@@ -45,10 +45,6 @@ def update_info_object(info_object, ddcs, keywords_to_remove):
                 """
             ),
             variable_values={
-                  "input": {
-                    "filter": { "link": { "eq": info_object["link"] } },
-                    "set": { "class": ddcs },
-                    "remove": { "keywords": keywords_to_remove }
-                  }
+                  "input": input
             }
         )
