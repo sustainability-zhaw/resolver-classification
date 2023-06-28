@@ -40,6 +40,7 @@ if __name__ == "__main__":
 
         try:
             channel.start_consuming()
+        # Don't recover if connection was closed by broker
         except pika.exceptions.ConnectionClosedByBroker:
             break
         # Don't recover on channel errors
