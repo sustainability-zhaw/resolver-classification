@@ -24,7 +24,9 @@ settings = Settings({
     "MQ_QUEUE": os.getenv("MQ_QUEUE", "classificationqueue"),
     "MQ_BINDKEYS": list([routing_key.strip() for routing_key in os.getenv("MQ_BINDKEYS", "importer.object").split(",")]),
     "MQ_HEARTBEAT": int(os.getenv("MQ_HEARTBEAT", 6000)),
-    "MQ_TIMEOUT": int(os.getenv("MQ_TIMEOUT", 3600))
+    "MQ_TIMEOUT": int(os.getenv("MQ_TIMEOUT", 3600)),
+    "MQ_USER": os.getenv("MQ_USER", "resolver-classification"),
+    "MQ_PASS": os.getenv("MQ_PASS", "guest")
 })
 
 for path in ["/etc/app/config.json", "/etc/app/secrets.json"]:

@@ -22,21 +22,18 @@ if __name__ == "__main__":
             pika.ConnectionParameters(
                 host=settings.MQ_HOST,
                 heartbeat=settings.MQ_HEARTBEAT,
-                blocked_connection_timeout=settings.MQ_TIMEOUT
+                blocked_connection_timeout=settings.MQ_TIMEOUT,
+                credentials=pika.PlainCredentials(settings.MQ_USER, settings.MQ_PASS)
             )
         )
 
         channel = connection.channel()
-        channel.exchange_declare(settings.MQ_EXCHANGE, exchange_type="topic")
-
-        queue_declare_result = channel.queue_declare(settings.MQ_QUEUE, exclusive=False)
-        queue_name = queue_declare_result.method.queue
 
         for routing_key in settings.MQ_BINDKEYS:
-            channel.queue_bind(queue_name, settings.MQ_EXCHANGE, routing_key=routing_key)
+            channel.queue_bind(settings.MQ_QUEUE, settings.MQ_EXCHANGE, routing_key=routing_key)
 
         channel.basic_qos(prefetch_count=1)
-        channel.basic_consume(queue_name, process_message)
+        channel.basic_consume(settings.MQ_QUEUE, process_message)
 
         try:
             channel.start_consuming()
