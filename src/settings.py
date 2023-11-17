@@ -1,20 +1,25 @@
 import json
 import os
 
+from collections import UserDict
 
-class Settings(dict):
-    def __init__(self, value: dict):
-        self.update({ 
-            key.upper(): Settings(value) if isinstance(value, dict) else value 
-            for key, value in value.items() 
-        })
-
+class Settings(UserDict):
     def __getattr__(self, name):
-        return self[name.upper()]
+        return self.__getitem__(name.upper());
 
-    def __setattr__(self, name, value):
-        self[name.upper()] = Settings(value) if isinstance(value, dict) else value 
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
 
+    def __setitem__(self, name, value):
+        name = name.upper()
+        super().__setitem__(name, Settings(value) if isinstance(value, dict) else value)
+    
+    def load(self, pathlist: list):
+        for path in pathlist:
+            if os.path.exists(path):
+                with open(path) as f:
+                    # this is a bit dangerous, we should not trust config files
+                    self.update(json.load(f))
 
 settings = Settings({
     "DB_HOST": os.getenv("DB_HOST", "localhost:8080"),
@@ -28,9 +33,3 @@ settings = Settings({
     "MQ_USER": os.getenv("MQ_USER", "resolver-classification"),
     "MQ_PASS": os.getenv("MQ_PASS", "guest")
 })
-
-for path in ["/etc/app/config.json", "/etc/app/secrets.json"]:
-    if os.path.exists(path):
-        with open(path) as file:
-            values = json.load(file)
-            settings.update(values)
